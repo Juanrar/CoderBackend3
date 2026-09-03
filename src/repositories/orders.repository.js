@@ -35,3 +35,7 @@ export const ordersRepository = {
     return StoreModel.findById(id);
   }
 };
+
+export const insertManyOrders = async (orders) => {
+  return await OrderModel.insertMany(orders);
+}

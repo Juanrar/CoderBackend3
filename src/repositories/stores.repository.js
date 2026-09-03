@@ -31,3 +31,7 @@ export const storesRepository = {
     return UserModel.findById(id);
   }
 };
+
+export const insertManyStores = async (stores) => {
+  return await StoreModel.insertMany(stores);
+}

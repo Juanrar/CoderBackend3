@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ORDER_STATUS } from '../constants/order.constants.js';
-import { DELIVERY_PRIORITY } from '../constants/delivery.constants.js';
 
-export const generateMockOrder = (customerId) => {
+export const generateMockOrder = (customerId, storeId) => {
     const items= [
         {
             name: faker.commerce.productName(),
@@ -15,14 +14,14 @@ export const generateMockOrder = (customerId) => {
 
     return {
         customer: customerId,
+        store: storeId,
         items: items,
         total: totalAmount,
         deliveryAddress: faker.location.streetAddress(),
-        status: ORDER_STATUS.PENDING,
-        deliveryPriority: DELIVERY_PRIORITY.STANDARD,
+        status: ORDER_STATUS.CREATED,
     }
 }
 
-export const generateMockOrders = (customerId, count = 10) => {
-    return Array.from({ length: count }, () => generateMockOrder(customerId));
+export const generateMockOrders = (customerId, count = 10, storeId) => {
+    return Array.from({ length: count }, () => generateMockOrder(customerId, storeId));
 }
