@@ -1,4 +1,5 @@
 import { ordersRepository } from "../repositories/orders.repository.js";
+import { createError } from "../utils/apiResponse.js";
 
 export const ordersService = {
   getOrders: async () => {
@@ -8,9 +9,7 @@ export const ordersService = {
   getOrderById: async (id) => {
     const order = await ordersRepository.findById(id);
     if (!order) {
-      const error = new Error("Pedido no encontrado");
-      error.statusCode = 404;
-      throw error;
+      throw createError("ORDER_NOT_FOUND");
     }
 
     return order;
@@ -20,23 +19,17 @@ export const ordersService = {
     const { customer, store, items, deliveryAddress, priority } = orderData;
 
     if (!customer || !store || !items || !deliveryAddress) {
-      const error = new Error("Faltan datos obligatorios");
-      error.statusCode = 400;
-      throw error;
+      throw createError("VALIDATION_ERROR");
     }
 
     const userFound = await ordersRepository.findCustomerById(customer);
     if (!userFound) {
-      const error = new Error("Usuario no encontrado");
-      error.statusCode = 404;
-      throw error;
+      throw createError("USER_NOT_FOUND");
     }
 
     const storeFound = await ordersRepository.findStoreById(store)
     if (!storeFound) {
-      const error = new Error("Tienda no encontrada");
-      error.statusCode = 404;
-      throw error;
+      throw createError("STORE_NOT_FOUND");
     }
 
     const total = items.reduce((accumulator, item) => accumulator + item.price * item.quantity, 0);
@@ -52,13 +45,12 @@ export const ordersService = {
   },
 
   updateOrderStatus: async (id, status) => {
-    //falta comprobar si el status contiene un valor valido
-
+    if (!status) {
+      throw createError("VALIDATION_ERROR");
+    }
     const order = await ordersRepository.updateStatus(id, status);
     if (!order) {
-      const error = new Error("Pedido no encontrado");
-      error.statusCode = 404;
-      throw error;
+      throw createError("ORDER_NOT_FOUND");
     }
 
     return order;
@@ -67,9 +59,7 @@ export const ordersService = {
   deleteOrder: async (id) => {
     const order = await ordersRepository.delete(id);
     if (!order) {
-      const error = new Error("Pedido no encontrado");
-      error.statusCode = 404;
-      throw error;
+      throw createError("ORDER_NOT_FOUND");
     }
 
     return order;

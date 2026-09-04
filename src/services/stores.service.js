@@ -1,4 +1,5 @@
 import { storesRepository } from "../repositories/stores.repository.js";
+import { createError } from "../utils/apiResponse.js";
 
 export const storesService = {
   getStores: async () => {
@@ -8,9 +9,7 @@ export const storesService = {
   getStoreById: async (id) => {
     const store = await storesRepository.findById(id);
     if (!store) {
-      const error = new Error("Tienda no encontrada");
-      error.statusCode = 404;
-      throw error;
+      throw createError("STORE_NOT_FOUND");
     }
 
     return store;
@@ -20,22 +19,16 @@ export const storesService = {
     const { name, address, owner } = storeData;
 
     if (!name || !address || !owner) {
-      const error = new Error("Faltan datos obligatorios");
-      error.statusCode = 400;
-      throw error;
+      throw createError("VALIDATION_ERROR");
     }
 
     const user = await storesRepository.findOwnerById(owner);
     if (!user) {
-      const error = new Error("Usuario owner no encontrado");
-      error.statusCode = 404;
-      throw error;
+      throw createError("USER_NOT_FOUND");
     }
 
     if (user.role !== "store") {
-      const error = new Error("El owner de una tienda debe tener rol store");
-      error.statusCode = 400;
-      throw error;
+      throw createError("USER_NOT_STORE_ROLE");
     }
 
     return storesRepository.create(storeData);
@@ -44,9 +37,7 @@ export const storesService = {
   updateStore: async (id, updates) => {
     const store = await storesRepository.update(id, updates);
     if (!store) {
-      const error = new Error("Tienda no encontrada");
-      error.statusCode = 404;
-      throw error;
+      throw createError("STORE_NOT_FOUND");
     }
 
     return store;
@@ -55,9 +46,7 @@ export const storesService = {
   deleteStore: async (id) => {
     const store = await storesRepository.delete(id);
     if (!store) {
-      const error = new Error("Tienda no encontrada");
-      error.statusCode = 404;
-      throw error;
+      throw createError("STORE_NOT_FOUND");
     }
 
     return store;
