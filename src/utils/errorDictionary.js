@@ -19,7 +19,7 @@ export const ERROR_DICTIONARY = {
         statusCode: 400,
         message: "Rol de usuario invalido"
     },
-    ROUTA_NOT_FOUND: {
+    ROUTE_NOT_FOUND: {
         statusCode: 404,
         message: "Ruta no encontrada"
     },
