@@ -22,7 +22,12 @@ const logger = winston.createLogger({
     ),
     transports:[
         new winston.transports.Console(),
-        new winston.transports.File({filename: './logs/test.conwinston.log'})
+        new winston.transports.File({
+            filename: './logs/test.conwinston.log',
+            maxsize: 5 * 1024 * 1024, 
+            maxFiles: 5,
+            tailable: true
+        })
     ]
 
 })
