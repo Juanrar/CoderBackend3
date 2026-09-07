@@ -8,8 +8,18 @@ const customLevels = {
         info: 3,
         http: 4,
         debug: 5
+    },
+    colors: {
+        fatal: "red",
+        error: "magenta",
+        warning: "yellow",
+        info: "blue",
+        http: "green",
+        debug: "white"
     }
 }
+
+winston.addColors(customLevels.colors);
 
 const logger = winston.createLogger({
     levels: customLevels.levels,
@@ -17,13 +27,16 @@ const logger = winston.createLogger({
     level: process.env.NODE_ENV === "production" ? "info" : "debug",
 
     format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.simple()
+        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        winston.format.printf(({ timestamp, level, message }) =>
+            `${timestamp} [${level.toUpperCase()}] ${message}`
+        )
     ),
     transports:[
         new winston.transports.Console(),
         new winston.transports.File({
-            filename: './logs/test.conwinston.log',
+            filename: './logs/error.log',
+            level: error,
             maxsize: 5 * 1024 * 1024, 
             maxFiles: 5,
             tailable: true
