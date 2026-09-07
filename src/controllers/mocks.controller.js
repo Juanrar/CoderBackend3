@@ -21,7 +21,7 @@ export const getMockUsers = (req, res) => {
 export const createMockUsers = (req, res) => {
     const { users = 0 } = req.body;
 
-    if(typeof users !== 'number') {
+    if (typeof users !== 'number') {
         return res.status(400).json({ status: "error", message: "Invalid input. 'users' and 'orders' must be numbers." });
     }
 
@@ -32,7 +32,7 @@ export const createMockUsers = (req, res) => {
 export const createMockOrders = (req, res) => {
     const { orders = 0 } = req.body;
 
-    if(typeof orders !== 'number') {
+    if (typeof orders !== 'number') {
         return res.status(400).json({ status: "error", message: "Invalid input. 'users' and 'orders' must be numbers." });
     }
 

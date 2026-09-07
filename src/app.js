@@ -6,11 +6,14 @@ import ordersRouter from "./routes/orders.router.js";
 import mocksRouter from "./routes/mocks.router.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
+import { addLogger } from "./middlewares/logger.middleware.js";
+
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(addLogger);
 
 app.get("/", (req, res) => {
   res.json({
