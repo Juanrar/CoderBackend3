@@ -8,6 +8,9 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { addLogger } from "./middlewares/logger.middleware.js";
 
+import { swaggerSpec } from "./docs/swagger.config.js";
+import swaggerUiExpress from "swagger-ui-express";
+
 
 const app = express();
 
@@ -33,6 +36,8 @@ app.use("/api/users", usersRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/mocks", mocksRouter);
+
+app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
 
 app.use(notFoundHandler);
 app.use(errorHandler);
