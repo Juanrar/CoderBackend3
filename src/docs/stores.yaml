@@ -1,0 +1,188 @@
+paths:
+
+  /api/stores:
+
+    get:
+      summary: Listar tiendas
+      description: Endpoint que devuelve el listado completo de tiendas
+      tags:
+        - Stores
+      responses:
+        "200":
+          description: Tiendas obtenidas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Store"
+              example:
+                status: success
+                message: Lista de tiendas obtenida
+                payload:
+                  - _id: "652f1c8e4b3a2d0012a4f9c7"
+                    name: Kiosco Central
+                    address: Av. Siempreviva 742
+                    owner: "652f1c8e4b3a2d0012a4f9b1"
+                    isActive: true
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      summary: Crear tienda
+      description: Endpoint para la creacion de una tienda nueva
+      tags:
+        - Stores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreInput"
+            example:
+              name: Kiosco Central
+              address: Av. Siempreviva 742
+              owner: "652f1c8e4b3a2d0012a4f9b1"
+      responses:
+        "201":
+          description: Tienda creada exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Store"
+              example:
+                status: success
+                message: Tienda creada
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9c7"
+                  name: Kiosco Central
+                  address: Av. Siempreviva 742
+                  owner: "652f1c8e4b3a2d0012a4f9b1"
+                  isActive: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/stores/{sid}:
+
+    get:
+      summary: Obtener tienda por ID
+      description: Endpoint que devuelve una tienda segun su ID
+      tags:
+        - Stores
+      parameters:
+        - $ref: "#/components/parameters/sid"
+      responses:
+        "200":
+          description: Tienda obtenida
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Store"
+              example:
+                status: success
+                message: Tienda obtenida por id
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9c7"
+                  name: Kiosco Central
+                  address: Av. Siempreviva 742
+                  owner: "652f1c8e4b3a2d0012a4f9b1"
+                  isActive: true
+        "404":
+          $ref: "#/components/responses/StoreNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    put:
+      summary: Actualizar tienda
+      description: Endpoint para modificar los datos de una tienda existente
+      tags:
+        - Stores
+      parameters:
+        - $ref: "#/components/parameters/sid"
+      requestBody:
+        required: true
+        description: Solo se envian los campos a modificar
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StoreUpdate"
+            example:
+              address: Av. Corrientes 1234
+              isActive: false
+      responses:
+        "200":
+          description: Tienda modificada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Store"
+              example:
+                status: success
+                message: Tienda modificada
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9c7"
+                  name: Kiosco Central
+                  address: Av. Corrientes 1234
+                  owner: "652f1c8e4b3a2d0012a4f9b1"
+                  isActive: false
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/StoreNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      summary: Eliminar tienda
+      description: Endpoint para eliminar una tienda existente
+      tags:
+        - Stores
+      parameters:
+        - $ref: "#/components/parameters/sid"
+      responses:
+        "200":
+          description: Tienda eliminada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Store"
+              example:
+                status: success
+                message: Tienda eliminada
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9c7"
+                  name: Kiosco Central
+                  address: Av. Siempreviva 742
+                  owner: "652f1c8e4b3a2d0012a4f9b1"
+                  isActive: true
+        "404":
+          $ref: "#/components/responses/StoreNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"

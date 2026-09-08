@@ -1,0 +1,195 @@
+paths:
+
+  /api/users:
+
+    get:
+      summary: Listar usuarios
+      description: Endpoint que devuelve el listado completo de usuarios
+      tags:
+        - Users
+      responses:
+        "200":
+          description: Usuarios obtenidos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/User"
+              example:
+                status: success
+                message: Lista de usuarios obtenido
+                payload:
+                  - _id: "652f1c8e4b3a2d0012a4f9b1"
+                    firstName: Juan
+                    lastName: Lorenzo
+                    email: juan@mail.com
+                    role: customer
+                  - _id: "652f1c8e4b3a2d0012a4f9b2"
+                    firstName: Ana
+                    lastName: Perez
+                    email: ana@mail.com
+                    role: store
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      summary: Crear usuario
+      description: Endpoint para la creacion de un usuario nuevo
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+            example:
+              firstName: Juan
+              lastName: Lorenzo
+              email: juan@mail.com
+              password: "123456"
+              role: customer
+      responses:
+        "201":
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/User"
+              example:
+                status: success
+                message: Usuario creado
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9b1"
+                  firstName: Juan
+                  lastName: Lorenzo
+                  email: juan@mail.com
+                  role: customer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/users/{uid}:
+
+    get:
+      summary: Obtener usuario por ID
+      description: Endpoint que devuelve un usuario segun su ID
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/uid"
+      responses:
+        "200":
+          description: Usuario obtenido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/User"
+              example:
+                status: success
+                message: Usuario obtenido por id
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9b1"
+                  firstName: Juan
+                  lastName: Lorenzo
+                  email: juan@mail.com
+                  role: customer
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    put:
+      summary: Actualizar usuario
+      description: Endpoint para modificar los datos de un usuario existente
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/uid"
+      requestBody:
+        required: true
+        description: Solo se envian los campos a modificar
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+            example:
+              firstName: Juan Carlos
+              role: store
+      responses:
+        "200":
+          description: Usuario modificado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/User"
+              example:
+                status: success
+                message: Usuario modificado
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9b1"
+                  firstName: Juan Carlos
+                  lastName: Lorenzo
+                  email: juan@mail.com
+                  role: store
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      summary: Eliminar usuario
+      description: Endpoint para eliminar un usuario existente
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/uid"
+      responses:
+        "200":
+          description: Usuario eliminado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/User"
+              example:
+                status: success
+                message: Usuario eliminado
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9b1"
+                  firstName: Juan
+                  lastName: Lorenzo
+                  email: juan@mail.com
+                  role: customer
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"

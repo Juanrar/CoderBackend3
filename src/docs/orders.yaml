@@ -1,0 +1,225 @@
+paths:
+
+  /api/orders:
+
+    get:
+      summary: Listar pedidos
+      description: Endpoint que devuelve el listado completo de pedidos
+      tags:
+        - Orders
+      responses:
+        "200":
+          description: Pedidos obtenidos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Order"
+              example:
+                status: success
+                message: Lista de pedidos obtenida
+                payload:
+                  - _id: "652f1c8e4b3a2d0012a4fa03"
+                    customer: "652f1c8e4b3a2d0012a4f9b1"
+                    store: "652f1c8e4b3a2d0012a4f9c7"
+                    items:
+                      - name: Coca Cola 1.5L
+                        quantity: 2
+                        price: 1500
+                    deliveryAddress: Calle Falsa 123
+                    total: 3000
+                    status: created
+                    priority: normal
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      summary: Crear pedido
+      description: Endpoint para la creacion de un pedido nuevo
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+            example:
+              customer: "652f1c8e4b3a2d0012a4f9b1"
+              store: "652f1c8e4b3a2d0012a4f9c7"
+              items:
+                - name: Coca Cola 1.5L
+                  quantity: 2
+                  price: 1500
+              deliveryAddress: Calle Falsa 123
+              total: 3000
+      responses:
+        "201":
+          description: Pedido creado exitosamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Order"
+              example:
+                status: success
+                message: Pedido creado
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4fa03"
+                  customer: "652f1c8e4b3a2d0012a4f9b1"
+                  store: "652f1c8e4b3a2d0012a4f9c7"
+                  items:
+                    - name: Coca Cola 1.5L
+                      quantity: 2
+                      price: 1500
+                  deliveryAddress: Calle Falsa 123
+                  total: 3000
+                  status: created
+                  priority: normal
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/orders/{oid}:
+
+    get:
+      summary: Obtener pedido por ID
+      description: Endpoint que devuelve un pedido segun su ID
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/oid"
+      responses:
+        "200":
+          description: Pedido obtenido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Order"
+              example:
+                status: success
+                message: Pedido obtenido por id
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4fa03"
+                  customer: "652f1c8e4b3a2d0012a4f9b1"
+                  store: "652f1c8e4b3a2d0012a4f9c7"
+                  items:
+                    - name: Coca Cola 1.5L
+                      quantity: 2
+                      price: 1500
+                  deliveryAddress: Calle Falsa 123
+                  total: 3000
+                  status: created
+                  priority: normal
+        "404":
+          $ref: "#/components/responses/OrderNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      summary: Eliminar pedido
+      description: Endpoint para eliminar un pedido existente
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/oid"
+      responses:
+        "200":
+          description: Pedido eliminado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Order"
+              example:
+                status: success
+                message: Pedido eliminado
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4fa03"
+                  customer: "652f1c8e4b3a2d0012a4f9b1"
+                  store: "652f1c8e4b3a2d0012a4f9c7"
+                  items:
+                    - name: Coca Cola 1.5L
+                      quantity: 2
+                      price: 1500
+                  deliveryAddress: Calle Falsa 123
+                  total: 3000
+                  status: cancelled
+                  priority: normal
+        "404":
+          $ref: "#/components/responses/OrderNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/orders/{oid}/status:
+
+    put:
+      summary: Actualizar estado del pedido
+      description: >
+        Endpoint para cambiar unicamente el estado de un pedido.
+        Es la unica parte del pedido que se puede modificar.
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/oid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderStatusUpdate"
+            example:
+              status: in_transit
+      responses:
+        "200":
+          description: Estado del pedido actualizado
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Order"
+              example:
+                status: success
+                message: Estado del pedido actualizado
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4fa03"
+                  customer: "652f1c8e4b3a2d0012a4f9b1"
+                  store: "652f1c8e4b3a2d0012a4f9c7"
+                  items:
+                    - name: Coca Cola 1.5L
+                      quantity: 2
+                      price: 1500
+                  deliveryAddress: Calle Falsa 123
+                  total: 3000
+                  status: in_transit
+                  priority: normal
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/OrderNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"

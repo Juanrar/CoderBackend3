@@ -6,9 +6,9 @@ const router = Router();
 
 router.get("/", getUsers);
 
-router.get("/:uid", getUserById);
-
 router.post("/", createUser);
+
+router.get("/:uid", getUserById);
 
 router.put("/:uid", updateUser);
 

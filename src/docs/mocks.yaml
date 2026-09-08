@@ -1,0 +1,236 @@
+paths:
+
+  /api/mocks/mockingusers:
+
+    get:
+      summary: Obtener usuarios de prueba
+      description: >
+        Genera 10 usuarios falsos con faker y los devuelve.
+        No se guardan en la base de datos.
+      tags:
+        - Mocks
+      responses:
+        "200":
+          description: Usuarios de prueba generados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: success }
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MockUser"
+
+  /api/mocks/mockingorders:
+
+    get:
+      summary: Obtener pedidos de prueba
+      description: >
+        Genera 10 pedidos falsos con faker, asociados a un customer y a una
+        store inventados. No se guardan en la base de datos.
+      tags:
+        - Mocks
+      responses:
+        "200":
+          description: Pedidos de prueba generados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: success }
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MockOrder"
+
+  /api/mocks/generateMockUsers:
+
+    post:
+      summary: Generar usuarios de prueba
+      description: >
+        Genera la cantidad de usuarios falsos indicada en el body.
+        No se guardan en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: integer
+                  description: Cantidad de usuarios a generar
+                  default: 0
+                  example: 5
+            example:
+              users: 5
+      responses:
+        "201":
+          description: Usuarios generados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: success }
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MockUser"
+        "400":
+          description: El campo users no es un numero
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MockError"
+              example:
+                status: error
+                message: "Invalid input. 'users' and 'orders' must be numbers."
+
+  /api/mocks/generateMockOrders:
+
+    post:
+      summary: Generar pedidos de prueba
+      description: >
+        Genera la cantidad de pedidos falsos indicada en el body.
+        No se guardan en la base de datos.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orders:
+                  type: integer
+                  description: Cantidad de pedidos a generar
+                  default: 0
+                  example: 5
+            example:
+              orders: 5
+      responses:
+        "201":
+          description: Pedidos generados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: success }
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MockOrder"
+        "400":
+          description: El campo orders no es un numero
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MockError"
+              example:
+                status: error
+                message: "Invalid input. 'users' and 'orders' must be numbers."
+
+  /api/mocks/generateData:
+
+    post:
+      summary: Generar e insertar datos de prueba
+      description: >
+        Genera usuarios, tiendas y pedidos falsos y los inserta en la base de
+        datos. Maximo 100 de cada uno. Las tiendas necesitan al menos 1 usuario
+        que sea su propietario, y los pedidos necesitan al menos 1 usuario y 1
+        tienda.
+      tags:
+        - Mocks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: integer
+                  maximum: 100
+                  default: 0
+                  example: 10
+                stores:
+                  type: integer
+                  maximum: 100
+                  default: 0
+                  example: 3
+                orders:
+                  type: integer
+                  maximum: 100
+                  default: 0
+                  example: 20
+            example:
+              users: 10
+              stores: 3
+              orders: 20
+      responses:
+        "201":
+          description: Datos generados e insertados en la base de datos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:  { type: string, example: success }
+                  message: { type: string, example: Data generated successfully }
+                  payload:
+                    type: object
+                    description: Cantidad de documentos insertados de cada tipo
+                    properties:
+                      users:  { type: integer, example: 10 }
+                      orders: { type: integer, example: 20 }
+                      stores: { type: integer, example: 3 }
+              example:
+                status: success
+                message: Data generated successfully
+                payload:
+                  users: 10
+                  orders: 20
+                  stores: 3
+        "400":
+          description: >
+            Datos invalidos, se supero el maximo de 100, o faltan usuarios o
+            tiendas para poder generar el resto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MockError"
+              examples:
+                invalidos:
+                  summary: Algun campo no es un numero
+                  value:
+                    status: error
+                    message: Invalid data
+                maximo:
+                  summary: Se supero el maximo permitido
+                  value:
+                    status: error
+                    message: Maximum amount of users, orders or stores is 100
+                sinUsuarios:
+                  summary: Se pidieron tiendas sin usuarios
+                  value:
+                    status: error
+                    message: Generating stores requires at least 1 user to act as owner
+                sinTiendas:
+                  summary: Se pidieron pedidos sin usuarios o sin tiendas
+                  value:
+                    status: error
+                    message: Generating orders requires at least 1 user and 1 store
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MockError"

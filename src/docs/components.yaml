@@ -1,0 +1,286 @@
+components:
+
+  schemas:
+
+    # ---------- USERS ----------
+
+    # Usuario tal como lo devuelve la API (sin password)
+    User:
+      type: object
+      properties:
+        _id:       { type: string, example: "652f1c8e4b3a2d0012a4f9b1" }
+        firstName: { type: string, example: Juan }
+        lastName:  { type: string, example: Lorenzo }
+        email:     { type: string, format: email, example: juan@mail.com }
+        role:      { type: string, enum: [admin, customer, store], example: customer }
+        documents: { type: array, items: { type: object } }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    # Body del POST: todos los campos obligatorios
+    UserInput:
+      type: object
+      required: [firstName, lastName, email, password]
+      properties:
+        firstName: { type: string, example: Juan }
+        lastName:  { type: string, example: Lorenzo }
+        email:     { type: string, format: email, example: juan@mail.com }
+        password:  { type: string, example: "123456" }
+        role:
+          type: string
+          enum: [admin, customer, store]
+          default: customer
+
+    # Body del PUT: mismos campos, todos opcionales
+    UserUpdate:
+      type: object
+      properties:
+        firstName: { type: string, example: Juan }
+        lastName:  { type: string, example: Lorenzo }
+        email:     { type: string, format: email, example: juan@mail.com }
+        role:
+          type: string
+          enum: [admin, customer, store]
+
+    # ---------- STORES ----------
+
+    Store:
+      type: object
+      properties:
+        _id:     { type: string, example: "652f1c8e4b3a2d0012a4f9c7" }
+        name:    { type: string, example: Kiosco Central }
+        address: { type: string, example: Av. Siempreviva 742 }
+        owner:
+          type: string
+          description: ID del usuario propietario de la tienda
+          example: "652f1c8e4b3a2d0012a4f9b1"
+        isActive:  { type: boolean, default: true, example: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    StoreInput:
+      type: object
+      required: [name, address, owner]
+      properties:
+        name:    { type: string, example: Kiosco Central }
+        address: { type: string, example: Av. Siempreviva 742 }
+        owner:
+          type: string
+          description: ID de un usuario existente
+          example: "652f1c8e4b3a2d0012a4f9b1"
+        isActive: { type: boolean, default: true }
+
+    StoreUpdate:
+      type: object
+      properties:
+        name:     { type: string, example: Kiosco Central }
+        address:  { type: string, example: Av. Siempreviva 742 }
+        isActive: { type: boolean, example: false }
+
+    # ---------- ORDERS ----------
+
+    OrderItem:
+      type: object
+      required: [name, quantity, price]
+      properties:
+        name:     { type: string, example: Coca Cola 1.5L }
+        quantity: { type: integer, minimum: 1, example: 2 }
+        price:    { type: number, example: 1500 }
+
+    Order:
+      type: object
+      properties:
+        _id: { type: string, example: "652f1c8e4b3a2d0012a4fa03" }
+        customer:
+          type: string
+          description: ID del usuario que hizo el pedido
+          example: "652f1c8e4b3a2d0012a4f9b1"
+        store:
+          type: string
+          description: ID de la tienda
+          example: "652f1c8e4b3a2d0012a4f9c7"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        deliveryAddress: { type: string, example: Calle Falsa 123 }
+        total:           { type: number, example: 3000 }
+        status:
+          type: string
+          enum: [created, assigned, picked_up, in_transit, delivered, cancelled]
+          default: created
+          example: created
+        priority:
+          type: string
+          enum: [low, normal, high]
+          default: normal
+          example: normal
+        proof:
+          type: object
+          nullable: true
+          default: null
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    OrderInput:
+      type: object
+      required: [customer, store, items, deliveryAddress, total]
+      properties:
+        customer: { type: string, example: "652f1c8e4b3a2d0012a4f9b1" }
+        store:    { type: string, example: "652f1c8e4b3a2d0012a4f9c7" }
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        deliveryAddress: { type: string, example: Calle Falsa 123 }
+        total:           { type: number, example: 3000 }
+        priority:
+          type: string
+          enum: [low, normal, high]
+          default: normal
+
+    # Body del PUT /api/orders/{oid}/status: solo el estado
+    OrderStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [created, assigned, picked_up, in_transit, delivered, cancelled]
+          example: in_transit
+
+    # ---------- MOCKS ----------
+
+    # Usuario generado por faker: no esta persistido, por eso no tiene _id
+    MockUser:
+      type: object
+      properties:
+        firstName: { type: string, example: Ana }
+        lastName:  { type: string, example: Gomez }
+        email:     { type: string, format: email, example: ana.gomez@mail.com }
+        password:  { type: string, example: "aX9kM2pLzQ" }
+        role:      { type: string, example: customer }
+
+    MockOrder:
+      type: object
+      properties:
+        customer: { type: string, example: "652f1c8e4b3a2d0012a4f9b1" }
+        store:    { type: string, example: "652f1c8e4b3a2d0012a4f9c7" }
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        total:           { type: number, example: 3000 }
+        deliveryAddress: { type: string, example: Calle Falsa 123 }
+        status:          { type: string, example: created }
+
+    # ---------- SOBRES DE RESPUESTA ----------
+
+    # Formato de successResponse(): status + message (+ payload segun la ruta)
+    ApiSuccess:
+      type: object
+      properties:
+        status:  { type: string, example: success }
+        message: { type: string, example: Operacion exitosa }
+
+    # Formato de errorResponse()
+    ApiError:
+      type: object
+      properties:
+        status:  { type: string, example: error }
+        error:   { type: string, example: USER_NOT_FOUND }
+        message: { type: string, example: Usuario no encontrado }
+
+    # Los endpoints de mocks NO pasan por errorHandler:
+    # responden a mano y sin la clave "error"
+    MockError:
+      type: object
+      properties:
+        status:  { type: string, example: error }
+        message: { type: string, example: Invalid data }
+
+  parameters:
+
+    uid:
+      name: uid
+      in: path
+      required: true
+      description: ID de MongoDB del usuario
+      schema:
+        type: string
+      example: "652f1c8e4b3a2d0012a4f9b1"
+
+    sid:
+      name: sid
+      in: path
+      required: true
+      description: ID de MongoDB de la tienda
+      schema:
+        type: string
+      example: "652f1c8e4b3a2d0012a4f9c7"
+
+    oid:
+      name: oid
+      in: path
+      required: true
+      description: ID de MongoDB del pedido
+      schema:
+        type: string
+      example: "652f1c8e4b3a2d0012a4fa03"
+
+  responses:
+
+    BadRequest:
+      description: Datos invalidos o incompletos
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            status: error
+            error: VALIDATION_ERROR
+            message: Datos invalidos o incompletos
+
+    NotFound:
+      description: Usuario no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            status: error
+            error: USER_NOT_FOUND
+            message: Usuario no encontrado
+
+    StoreNotFound:
+      description: Tienda no encontrada
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            status: error
+            error: STORE_NOT_FOUND
+            message: Tienda no encontrada
+
+    OrderNotFound:
+      description: Pedido no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            status: error
+            error: ORDER_NOT_FOUND
+            message: Orden no encontrado
+
+    ServerError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            status: error
+            error: INTERNAL_SERVER_ERROR
+            message: Error interno en el servidor
