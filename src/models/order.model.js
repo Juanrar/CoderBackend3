@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ORDER_STATUSES } from "../constants/order.constants.js";
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -46,7 +47,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["created", "assigned", "picked_up", "in_transit", "delivered", "cancelled"],
+      enum: ORDER_STATUSES,
       default: "created"
     },
     priority: {

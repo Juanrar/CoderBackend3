@@ -1,5 +1,6 @@
 import { ordersRepository } from "../repositories/orders.repository.js";
 import { createError } from "../utils/apiResponse.js";
+import { ORDER_STATUSES } from "../constants/order.constants.js";
 
 export const ordersService = {
   getOrders: async () => {
@@ -45,9 +46,13 @@ export const ordersService = {
   },
 
   updateOrderStatus: async (id, status) => {
-    if (!status) {
-      throw createError("VALIDATION_ERROR");
+    if (!ORDER_STATUSES.includes(status)) {
+      throw createError(
+        "VALIDATION_ERROR",
+        `El estado '${status ?? ""}' no es valido`
+      );
     }
+
     const order = await ordersRepository.updateStatus(id, status);
     if (!order) {
       throw createError("ORDER_NOT_FOUND");
