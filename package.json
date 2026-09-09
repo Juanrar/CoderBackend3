@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "mocha --file ./test/setup.js --timeout 10000 --exit ./test/**/*.test.js"
+    "test": "mocha --require ./test/setup.js --timeout 10000 --exit ./test/**/*.test.js"
   },
   "dependencies": {
     "chai": "^6.2.2",
