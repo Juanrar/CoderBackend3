@@ -68,5 +68,27 @@ export const ordersService = {
     }
 
     return order;
+  },
+
+  addProof : async (oid, file) => {
+    if (!file) {
+      throw createError("FILE_REQUIRED");
+    }
+
+    const order = await ordersRepository.findById(oid);
+
+    if (!order) {
+      throw createError("ORDER_NOT_FOUND");
+    }
+
+    const proof = {
+      originalName: file.originalname,
+      fileName: file.filename,
+      path: file.path,
+      mimeType: file.mimetype,
+      size: file.size,
+    };
+
+    return ordersRepository.update(oid, { proof });
   }
 };

@@ -33,6 +33,10 @@ export const ordersRepository = {
 
   findStoreById: async (id) => {
     return StoreModel.findById(id);
+  },
+
+  update: async (id, updateData) => {
+    return OrderModel.findByIdAndUpdate(id, updateData, { new: true });
   }
 };
 
