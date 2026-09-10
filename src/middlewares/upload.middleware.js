@@ -19,25 +19,21 @@ const fileFilter = (req, file, cb) => {
   }
 }
 
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const folder = req.body.type === 'delivery_proof'
-      ? 'uploads/proofs'
-      : 'uploads/documents'
-
-    fs.mkdirSync(folder, { recursive: true })
-
-    cb(null, folder)
-  },
-  filename: (req, file, cb) => {
-    const extension = path.extname(file.originalname);
-    const fileName = `${crypto.randomUUID()}${extension}`;
-    cb(null, fileName)
-  }
+const createUpload =  (folder) => multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      fs.mkdirSync(folder, { recursive: true });
+      cb(null, folder);
+    },
+    filename: (req, file, cb) => {
+      const extension = path.extname(file.originalname);
+      const name =  `${crypto.randomUUID()}${extension}`;
+      cb(null, name);
+    }
+  }),
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }
 })
 
-
-const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024} })
-
-export default upload
+export const uploadDocument = createUpload('uploads/documents');
+export const uploadProof = createUpload('uploads/proofs');
