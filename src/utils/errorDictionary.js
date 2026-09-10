@@ -28,7 +28,11 @@ export const ERROR_DICTIONARY = {
         message: "Error interno en el servidor"
     },
     USER_NOT_STORE_ROLE: {
-    statusCode: 400,
-    message: "El usuario debe tener rol 'store' para ser dueño de una tienda"
+        statusCode: 400,
+        message: "El usuario debe tener rol 'store' para ser dueño de una tienda"
+    },
+    FILE_REQUIRED:{
+        statusCode: 400,
+        message: "Se requiere un archivo para subir"
     }
 }

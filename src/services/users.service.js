@@ -39,5 +39,29 @@ export const usersService = {
     }
 
     return user;
+  },
+
+  addDocument: async (uid, file, type) => {
+    if (!file) {
+      throw createError("FILE_REQUIRED");
+    }
+
+    const user = await usersRepository.findById(uid)
+
+    if (!user) {
+      throw createError("USER_NOT_FOUND");
+    }
+
+    const document = {
+      name: file.originalname,
+      path: file.path,
+      type
+    }
+
+    user.documents.push(document)
+
+    return usersRepository.update(uid, {
+      documents: user.documents
+    })
   }
 };
