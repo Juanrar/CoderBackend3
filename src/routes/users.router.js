@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { getUsers, getUserById, createUser, updateUser, deleteUser } from "../controllers/users.controller.js";
+import { getUsers, getUserById, createUser, updateUser, deleteUser, uploadUserDocument } from "../controllers/users.controller.js";
 import upload from '../middlewares/upload.middleware.js';
-import { uploadUserDocument } from '../controllers/users.controller.js';
 
 const router = Router();
 
