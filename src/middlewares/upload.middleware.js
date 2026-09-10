@@ -1,5 +1,8 @@
-import multer from 'multer'
-import path from 'path'
+import multer from 'multer';
+import path from 'path';
+import { createError } from '../utils/apiResponse.js';
+import crypto from 'crypto';
+import fs from 'fs';
 
 const allowedMimeTypes = [
   'application/pdf',
@@ -12,7 +15,7 @@ const fileFilter = (req, file, cb) => {
   if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true)
   } else {
-    cb(new Error('Tipo de archivo no permitido'))
+    cb(createError("INVALID_FILE_TYPE", "Tipo de archivo no permitido"), false)
   }
 }
 
@@ -23,11 +26,14 @@ const storage = multer.diskStorage({
       ? 'uploads/proofs'
       : 'uploads/documents'
 
+    fs.mkdirSync(folder, { recursive: true })
+
     cb(null, folder)
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`
-    cb(null, uniqueName)
+    const extension = path.extname(file.originalname);
+    const fileName = `${crypto.randomUUID()}${extension}`;
+    cb(null, fileName)
   }
 })
 

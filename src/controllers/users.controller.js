@@ -1,5 +1,6 @@
 import { usersService } from "../services/users.service.js";
 import { successResponse } from "../utils/apiResponse.js";
+import fs from 'fs';
 
 export const getUsers = async (req, res, next) => {
   try {
@@ -54,6 +55,10 @@ export const uploadUserDocument = async (req, res, next) => {
     const user = await usersService.addDocument(uid, file, type)
     successResponse(res, { message: "Documento subido correctamente", payload: user });
   }catch (error) {
+    if (req.file && req.file.path) {
+      await fs.promises.unlink(req.file.path)
+    }
+    
     next(error);
   }
 }

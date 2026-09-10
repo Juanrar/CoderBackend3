@@ -1,5 +1,6 @@
 import { usersRepository } from "../repositories/users.repository.js";
 import { createError } from "../utils/apiResponse.js";
+import { DOCUMENT_TYPES } from "../constants/documents.contants.js";
 
 export const usersService = {
   getUsers: async () => {
@@ -46,6 +47,10 @@ export const usersService = {
       throw createError("FILE_REQUIRED");
     }
 
+    if (!Object.values(DOCUMENT_TYPES).includes(type)){
+      throw createError("INVALID_DOCUMENT_TYPE");
+    };
+
     const user = await usersRepository.findById(uid)
 
     if (!user) {
@@ -53,15 +58,19 @@ export const usersService = {
     }
 
     const document = {
-      name: file.originalname,
+      originalName: file.originalname,
+      fileName: file.filename,
       path: file.path,
+      mimeType: file.mimetype,
+      size: file.size,
       type
     }
 
-    user.documents.push(document)
+    const documents = [...user.documents, document];
+
 
     return usersRepository.update(uid, {
-      documents: user.documents
+      documents: documents
     })
   }
 };
