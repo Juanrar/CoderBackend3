@@ -164,18 +164,19 @@ describe("Testing del modulo Orders", () => {
         .send({});
 
       expect(status).to.equal(400);
-      expect(body.error).to.equal("VALIDATION_ERROR");
+      expect(body.error).to.equal("INVALID_STATUS");
     });
 
     it("Debe rechazar con 400 un status que no esta en el enum", async () => {
       const creada = await requester.post("/api/orders").send(ordenValida());
       const id = creada.body.payload._id;
 
-      const { status } = await requester
+      const { status, body } = await requester
         .put(`/api/orders/${id}/status`)
         .send({ status: "volando" });
 
       expect(status).to.equal(400);
+      expect(body.error).to.equal("INVALID_STATUS");
     });
   });
 

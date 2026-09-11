@@ -73,8 +73,8 @@ export const ordersService = {
   updateOrderStatus: async (id, status) => {
     if (!ORDER_STATUSES.includes(status)) {
       throw createError(
-        "VALIDATION_ERROR",
-        `El estado '${status ?? ""}' no es valido`
+        "INVALID_STATUS",
+        `El estado '${status ?? ""}' no es valido. Estados permitidos: ${ORDER_STATUSES.join(", ")}`
       );
     }
 

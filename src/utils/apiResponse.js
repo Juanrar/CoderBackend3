@@ -19,9 +19,18 @@ export function errorResponse(res, { statusCode = 500, error, message="Error int
 }
 
 export function createError(code, message = null) {
-    const errorDefinition = ERROR_DICTIONARY[code] || ERROR_DICTIONARY.INTERNAL_SERVER_ERROR;
-    const error = new Error( message || errorDefinition.message);
-    error.statusCode = errorDefinition.statusCode;
-    error.code = ERROR_DICTIONARY[code] ? code : "INTERNAL_SERVER_ERROR";
+    const errorDefinition = ERROR_DICTIONARY[code];
+
+    if (!errorDefinition) {
+        console.warn(
+            `[createError] El codigo '${code}' no existe en ERROR_DICTIONARY. ` +
+            `Se responde 500 en su lugar. Agregalo en src/utils/errorDictionary.js.`
+        );
+    }
+
+    const definition = errorDefinition || ERROR_DICTIONARY.INTERNAL_SERVER_ERROR;
+    const error = new Error(message || definition.message);
+    error.statusCode = definition.statusCode;
+    error.code = errorDefinition ? code : "INTERNAL_SERVER_ERROR";
     return error;
 }
