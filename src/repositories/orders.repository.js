@@ -21,13 +21,17 @@ export const ordersRepository = {
     return OrderModel.create(orderData);
   },
 
-  updateStatus: async (id, status) => {
+  updateStatus: async (id, status, historyEntry) => {
     return OrderModel.findByIdAndUpdate(
       id,
-      { status },
+      {
+        status,
+        ...(historyEntry && { $push: { statusHistory: historyEntry } })
+      },
       { new: true, runValidators: true }
     );
   },
+
 
   delete: async (id) => {
     return OrderModel.findByIdAndDelete(id);

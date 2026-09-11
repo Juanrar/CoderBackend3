@@ -1,6 +1,6 @@
 import { usersRepository } from "../repositories/users.repository.js";
 import { createError } from "../utils/apiResponse.js";
-import { DOCUMENT_TYPES } from "../constants/documents.contants.js";
+import { DOCUMENT_TYPES } from "../constants/documents.constants.js";
 import { buildPaginationOptions, formatPaginated } from "../utils/pagination.js";
 
 export const usersService = {

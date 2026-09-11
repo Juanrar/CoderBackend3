@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
-import { ORDER_STATUSES } from "../constants/order.constants.js";
+import {
+  ORDER_STATUS,
+  ORDER_STATUSES,
+  ORDER_PRIORITY,
+  ORDER_PRIORITIES
+} from "../constants/order.constants.js";
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -49,12 +54,21 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ORDER_STATUSES,
-      default: "created"
+      default: ORDER_STATUS.CREATED
+    },
+    statusHistory: {
+      type: [
+        {
+          status: { type: String, enum: ORDER_STATUSES, required: true },
+          changedAt: { type: Date, default: Date.now }
+        }
+      ],
+      default: []
     },
     priority: {
       type: String,
-      enum: ["low", "normal", "high"],
-      default: "normal"
+      enum: ORDER_PRIORITIES,
+      default: ORDER_PRIORITY.NORMAL
     },
     proof: {
       type: Object,

@@ -1,5 +1,4 @@
 import { Router } from "express";
-import StoreModel from "../models/store.model.js";
 import { getStores, getStoreById, createStore, updateStore, deleteStore } from "../controllers/stores.controller.js";
 
 

@@ -1,6 +1,12 @@
 import { ordersRepository } from "../repositories/orders.repository.js";
 import { createError } from "../utils/apiResponse.js";
-import { ORDER_STATUSES } from "../constants/order.constants.js";
+import {
+  ORDER_STATUS,
+  ORDER_STATUSES,
+  ORDER_PRIORITY,
+  ORDER_PRIORITIES,
+  ORDER_STATUS_TRANSITIONS
+} from "../constants/order.constants.js";
 import { buildPaginationOptions, formatPaginated } from "../utils/pagination.js";
 
 export const ordersService = {
@@ -16,7 +22,7 @@ export const ordersService = {
     }
 
     if (priority) {
-      if (!["low", "normal", "high"].includes(priority)) {
+      if (!ORDER_PRIORITIES.includes(priority)) {
         throw createError("VALIDATION_ERROR", `La prioridad '${priority}' no es valida`);
       }
       filter.priority = priority;
@@ -60,11 +66,19 @@ export const ordersService = {
 
     const total = items.reduce((accumulator, item) => accumulator + item.price * item.quantity, 0);
 
+    if (priority && !ORDER_PRIORITIES.includes(priority)) {
+      throw createError(
+        "VALIDATION_ERROR",
+        `La prioridad '${priority}' no es valida. Permitidas: ${ORDER_PRIORITIES.join(", ")}`
+      );
+    }
+
     const newOrder = {
       ...orderData,
       total,
-      status: "created",
-      priority: "normal"
+      status: ORDER_STATUS.CREATED,
+      priority: priority || ORDER_PRIORITY.NORMAL,
+      statusHistory: [{ status: ORDER_STATUS.CREATED, changedAt: new Date() }]
     };
 
     return ordersRepository.create(newOrder);
@@ -78,12 +92,52 @@ export const ordersService = {
       );
     }
 
-    const order = await ordersRepository.updateStatus(id, status);
+    const order = await ordersRepository.findById(id);
     if (!order) {
       throw createError("ORDER_NOT_FOUND");
     }
 
-    return order;
+    if (order.status === status) {
+      throw createError(
+        "INVALID_STATUS",
+        `El pedido ya se encuentra en estado '${status}'`
+      );
+    }
+
+    const allowed = ORDER_STATUS_TRANSITIONS[order.status] ?? [];
+    if (!allowed.includes(status)) {
+      throw createError(
+        "INVALID_STATUS",
+        allowed.length
+          ? `No se puede pasar de '${order.status}' a '${status}'. Transiciones validas: ${allowed.join(", ")}`
+          : `El pedido esta en estado final '${order.status}' y no admite mas cambios`
+      );
+    }
+
+    return ordersRepository.updateStatus(id, status, {
+      status,
+      changedAt: new Date()
+    });
+  },
+
+  getOrderTracking: async (id) => {
+    const order = await ordersRepository.findById(id);
+    if (!order) {
+      throw createError("ORDER_NOT_FOUND");
+    }
+
+    return {
+      orderId: order._id,
+      currentStatus: order.status,
+      deliveryAddress: order.deliveryAddress,
+      priority: order.priority,
+      nextStatuses: ORDER_STATUS_TRANSITIONS[order.status] ?? [],
+      isFinal: (ORDER_STATUS_TRANSITIONS[order.status] ?? []).length === 0,
+      hasProof: Boolean(order.proof),
+      history: order.statusHistory,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt
+    };
   },
 
   deleteOrder: async (id) => {

@@ -36,6 +36,7 @@ describe("Testing de documentacion y observabilidad", () => {
         "/api/orders",
         "/api/orders/{oid}",
         "/api/orders/{oid}/status",
+        "/api/orders/{oid}/tracking",
         "/api/orders/{oid}/proof",
         "/api/mocks/mockingusers",
         "/api/mocks/generateData",

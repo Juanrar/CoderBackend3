@@ -118,11 +118,56 @@ components:
           enum: [low, normal, high]
           default: normal
           example: normal
+        statusHistory:
+          type: array
+          description: Historial de cambios de estado, en orden cronologico
+          items:
+            $ref: "#/components/schemas/StatusHistoryEntry"
         proof:
           allOf:
             - $ref: "#/components/schemas/FileMetadata"
           nullable: true
           default: null
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    StatusHistoryEntry:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [created, assigned, picked_up, in_transit, delivered, cancelled]
+          example: assigned
+        changedAt: { type: string, format: date-time }
+
+    # Respuesta del endpoint de seguimiento
+    OrderTracking:
+      type: object
+      properties:
+        orderId:         { type: string, example: "652f1c8e4b3a2d0012a4f9c7" }
+        currentStatus:
+          type: string
+          enum: [created, assigned, picked_up, in_transit, delivered, cancelled]
+          example: in_transit
+        deliveryAddress: { type: string, example: Calle Falsa 123 }
+        priority:        { type: string, enum: [low, normal, high], example: normal }
+        nextStatuses:
+          type: array
+          description: Estados a los que puede pasar el pedido desde el estado actual
+          items: { type: string }
+          example: [delivered, cancelled]
+        isFinal:
+          type: boolean
+          description: true si el pedido esta entregado o cancelado y no admite mas cambios
+          example: false
+        hasProof:
+          type: boolean
+          description: Indica si ya se cargo el comprobante de entrega
+          example: false
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusHistoryEntry"
         createdAt: { type: string, format: date-time }
         updatedAt: { type: string, format: date-time }
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getOrders, getOrderById, createOrder, updateOrderStatus, deleteOrder, uploadOrderProof } from "../controllers/orders.controller.js";
+import { getOrders, getOrderById, createOrder, updateOrderStatus, deleteOrder, getOrderTracking, uploadOrderProof } from "../controllers/orders.controller.js";
 import {uploadProof} from '../middlewares/upload.middleware.js';
 
 const router = Router();
@@ -7,6 +7,8 @@ const router = Router();
 router.get("/", getOrders);
 
 router.get("/:oid", getOrderById);
+
+router.get("/:oid/tracking", getOrderTracking);
 
 router.post("/", createOrder);
 

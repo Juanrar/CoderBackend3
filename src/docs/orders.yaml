@@ -189,6 +189,10 @@ paths:
       description: >
         Endpoint para cambiar unicamente el estado de un pedido.
         Es la unica parte del pedido que se puede modificar.
+        El cambio respeta el ciclo de vida del pedido: solo se admiten las transiciones
+        created -> assigned -> picked_up -> in_transit -> delivered, y cancelled desde
+        cualquier estado no final. Cada cambio queda registrado en el historial que
+        expone /api/orders/{oid}/tracking.
       tags:
         - Orders
       parameters:
@@ -285,6 +289,55 @@ paths:
                     size: 102400
         "400":
           $ref: "#/components/responses/InvalidFile"
+        "404":
+          $ref: "#/components/responses/OrderNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /api/orders/{oid}/tracking:
+
+    get:
+      summary: Seguimiento de un pedido
+      description: >
+        Devuelve el estado actual del pedido, su historial completo de cambios de estado
+        y a que estados puede pasar desde donde esta. Un pedido entregado o cancelado
+        es final y no admite mas transiciones.
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/oid"
+      responses:
+        "200":
+          description: Seguimiento obtenido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/OrderTracking"
+              example:
+                status: success
+                message: Seguimiento del pedido
+                payload:
+                  orderId: "652f1c8e4b3a2d0012a4f9c7"
+                  currentStatus: in_transit
+                  deliveryAddress: Calle Falsa 123
+                  priority: normal
+                  nextStatuses: [delivered, cancelled]
+                  isFinal: false
+                  hasProof: false
+                  history:
+                    - status: created
+                      changedAt: "2026-09-11T12:00:00.000Z"
+                    - status: assigned
+                      changedAt: "2026-09-11T12:05:00.000Z"
+                    - status: picked_up
+                      changedAt: "2026-09-11T12:20:00.000Z"
+                    - status: in_transit
+                      changedAt: "2026-09-11T12:35:00.000Z"
         "404":
           $ref: "#/components/responses/OrderNotFound"
         "500":

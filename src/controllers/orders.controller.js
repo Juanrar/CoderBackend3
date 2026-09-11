@@ -47,6 +47,15 @@ export const deleteOrder = async(req, res, next) => {
   }
 };
 
+export const getOrderTracking = async (req, res, next) => {
+  try {
+    const tracking = await ordersService.getOrderTracking(req.params.oid);
+    successResponse(res, { message: "Seguimiento del pedido", payload: tracking });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const uploadOrderProof = async (req, res, next) => {
   try {
     const { oid } = req.params;
