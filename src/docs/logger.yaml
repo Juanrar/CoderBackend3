@@ -1,0 +1,37 @@
+paths:
+
+  /api/loggerTest:
+
+    get:
+      summary: Probar el logger
+      description: >
+        Endpoint interno de diagnostico. Emite un log por cada nivel definido
+        (fatal, error, warning, info, http y debug) y devuelve que niveles quedan
+        efectivamente registrados segun el LOG_LEVEL activo.
+        Los errores se escriben en logs/error.log y toda la actividad en logs/combined.log.
+        La salida por consola solo esta activa en desarrollo.
+      tags:
+        - Logger
+      responses:
+        "200":
+          description: Logs de prueba emitidos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/LoggerTestResult"
+              example:
+                status: success
+                message: Logs de prueba emitidos
+                payload:
+                  environment: development
+                  activeLevel: debug
+                  emittedLevels: [fatal, error, warning, info, http, debug]
+                  recordedLevels: [fatal, error, warning, info, http, debug]
+                  files: ["logs/error.log", "logs/combined.log"]
+        "500":
+          $ref: "#/components/responses/ServerError"

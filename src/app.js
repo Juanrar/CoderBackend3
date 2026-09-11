@@ -4,6 +4,7 @@ import usersRouter from "./routes/users.router.js";
 import storesRouter from "./routes/stores.router.js";
 import ordersRouter from "./routes/orders.router.js";
 import mocksRouter from "./routes/mocks.router.js";
+import loggerRouter from "./routes/logger.router.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { addLogger } from "./middlewares/logger.middleware.js";
@@ -52,6 +53,8 @@ app.get("/health", (req, res) => {
 app.use("/api/users", usersRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/orders", ordersRouter);
+
+app.use("/api/loggerTest", loggerRouter);
 
 if (envConfig.enableMocks) {
   app.use("/api/mocks", mocksRouter);
