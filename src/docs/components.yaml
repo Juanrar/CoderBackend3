@@ -13,7 +13,10 @@ components:
         lastName:  { type: string, example: Lorenzo }
         email:     { type: string, format: email, example: juan@mail.com }
         role:      { type: string, enum: [admin, customer, store], example: customer }
-        documents: { type: array, items: { type: object } }
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserDocument"
         createdAt: { type: string, format: date-time }
         updatedAt: { type: string, format: date-time }
 
@@ -116,7 +119,8 @@ components:
           default: normal
           example: normal
         proof:
-          type: object
+          allOf:
+            - $ref: "#/components/schemas/FileMetadata"
           nullable: true
           default: null
         createdAt: { type: string, format: date-time }
@@ -177,6 +181,49 @@ components:
     # ---------- SOBRES DE RESPUESTA ----------
 
     # Formato de successResponse(): status + message (+ payload segun la ruta)
+    # ---------- ARCHIVOS ----------
+
+    # Metadata que se guarda en la base por cada archivo subido.
+    # El binario vive en uploads/, en la base solo queda esta referencia.
+    FileMetadata:
+      type: object
+      properties:
+        originalName: { type: string, example: dni-frente.pdf }
+        fileName:     { type: string, example: "9f1c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f.pdf" }
+        path:         { type: string, example: uploads/documents/9f1c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f.pdf }
+        mimeType:     { type: string, enum: [application/pdf, image/jpeg, image/png, image/webp] }
+        size:         { type: integer, description: Tamano en bytes, example: 245812 }
+
+    # Documento asociado a un usuario: metadata + tipo de documento
+    UserDocument:
+      allOf:
+        - $ref: "#/components/schemas/FileMetadata"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [user_document, driver_license, delivery_proof]
+              example: user_document
+
+    LoggerTestResult:
+      type: object
+      properties:
+        environment:    { type: string, example: development }
+        activeLevel:    { type: string, example: debug }
+        emittedLevels:
+          type: array
+          items: { type: string }
+          example: [fatal, error, warning, info, http, debug]
+        recordedLevels:
+          type: array
+          description: Niveles que efectivamente quedan escritos segun LOG_LEVEL
+          items: { type: string }
+          example: [fatal, error, warning, info]
+        files:
+          type: array
+          items: { type: string }
+          example: ["logs/error.log", "logs/combined.log"]
+
     ApiSuccess:
       type: object
       properties:
@@ -205,12 +252,6 @@ components:
         hasNextPage: { type: boolean, example: true }
         prevPage:    { type: integer, nullable: true, example: null }
         nextPage:    { type: integer, nullable: true, example: 2 }
-
-    MockError:
-      type: object
-      properties:
-        status:  { type: string, example: error }
-        message: { type: string, example: Invalid data }
 
   parameters:
 
@@ -389,3 +430,48 @@ components:
             status: error
             error: INTERNAL_SERVER_ERROR
             message: Error interno en el servidor
+
+    FileRequired:
+      description: No se envio ningun archivo
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            status: error
+            error: FILE_REQUIRED
+            message: Se requiere un archivo para subir
+
+    InvalidFile:
+      description: >
+        El archivo fue rechazado. Puede deberse al tipo (solo PDF, JPEG, PNG y WEBP),
+        al tamano (maximo 5MB) o al nombre del campo enviado.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          examples:
+            tipoInvalido:
+              summary: Tipo de archivo no permitido
+              value:
+                status: error
+                error: INVALID_FILE_TYPE
+                message: "Tipo de archivo no permitido. Formatos aceptados: PDF, JPEG, PNG, WEBP"
+            archivoGrande:
+              summary: Supera el limite de tamano
+              value:
+                status: error
+                error: FILE_TOO_LARGE
+                message: El archivo supera el tamano maximo permitido (5MB)
+            campoInesperado:
+              summary: Nombre de campo incorrecto
+              value:
+                status: error
+                error: INVALID_FILE_FIELD
+                message: Campo de archivo inesperado
+            documentoInvalido:
+              summary: Tipo de documento fuera del enum
+              value:
+                status: error
+                error: INVALID_DOCUMENT_TYPE
+                message: Tipo de documento invalido

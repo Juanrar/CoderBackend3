@@ -29,9 +29,9 @@ export const storesRepository = {
 
   findOwnerById: async (id) => {
     return UserModel.findById(id);
+  },
+
+  insertMany: async (stores) => {
+    return StoreModel.insertMany(stores);
   }
 };
-
-export const insertManyStores = async (stores) => {
-  return await StoreModel.insertMany(stores);
-}

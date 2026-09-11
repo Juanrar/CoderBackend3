@@ -204,3 +204,68 @@ paths:
           $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/ServerError"
+
+  /api/users/{uid}/documents:
+
+    post:
+      summary: Subir un documento de un usuario
+      description: >
+        Sube un archivo y lo asocia al usuario indicado. El binario se guarda en
+        uploads/documents con un nombre UUID y en la base queda unicamente la metadata.
+        Formatos aceptados: PDF, JPEG, PNG y WEBP. Tamano maximo: 5MB.
+        Si la subida falla despues de guardar el archivo, este se elimina del disco.
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/uid"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [document, type]
+              properties:
+                document:
+                  type: string
+                  format: binary
+                  description: Archivo a subir (PDF, JPEG, PNG o WEBP, hasta 5MB)
+                type:
+                  type: string
+                  enum: [user_document, driver_license, delivery_proof]
+                  description: Tipo de documento
+                  example: user_document
+      responses:
+        "200":
+          description: Documento subido y asociado al usuario
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/User"
+              example:
+                status: success
+                message: Documento subido correctamente
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9b1"
+                  firstName: Juan
+                  lastName: Lorenzo
+                  email: juan@mail.com
+                  role: customer
+                  documents:
+                    - originalName: dni-frente.pdf
+                      fileName: "9f1c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f.pdf"
+                      path: uploads/documents/9f1c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f.pdf
+                      mimeType: application/pdf
+                      size: 245812
+                      type: user_document
+        "400":
+          $ref: "#/components/responses/InvalidFile"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"

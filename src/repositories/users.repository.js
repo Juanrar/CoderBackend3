@@ -23,9 +23,9 @@ export const usersRepository = {
 
   delete: async (id) => {
     return UserModel.findByIdAndDelete(id)
+  },
+
+  insertMany: async (users) => {
+    return UserModel.insertMany(users);
   }
 };
-
-export const insertManyUsers = async (users) => {
-  return await UserModel.insertMany(users);
-}

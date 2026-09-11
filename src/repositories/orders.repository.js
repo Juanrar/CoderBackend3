@@ -43,9 +43,9 @@ export const ordersRepository = {
 
   update: async (id, updateData) => {
     return OrderModel.findByIdAndUpdate(id, updateData, { new: true });
+  },
+
+  insertMany: async (orders) => {
+    return OrderModel.insertMany(orders);
   }
 };
-
-export const insertManyOrders = async (orders) => {
-  return await OrderModel.insertMany(orders);
-}

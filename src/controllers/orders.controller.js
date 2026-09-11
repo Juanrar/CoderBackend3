@@ -1,6 +1,6 @@
 import { ordersService } from "../services/orders.service.js";
-import { usersService } from "../services/users.service.js";
 import { successResponse } from "../utils/apiResponse.js";
+import { removeUploadedFile } from "../utils/fileCleanup.js";
 
 export const getOrders = async (req, res, next) => {
   try {
@@ -47,20 +47,6 @@ export const deleteOrder = async(req, res, next) => {
   }
 };
 
-export const uploadUserDocument = async (req, res, next) => {
-  try {
-    const { uid } = req.params
-    const { type } = req.body
-    const file = req.file
-
-    const updatedUser = await usersService.addDocument(uid, file, type)
-
-    successResponse(res, { message: "Documento subido correctamente", payload: updatedUser });
-  } catch (error) {
-    next(error)
-  }
-};
-
 export const uploadOrderProof = async (req, res, next) => {
   try {
     const { oid } = req.params;
@@ -70,6 +56,7 @@ export const uploadOrderProof = async (req, res, next) => {
 
     successResponse(res, { message: "Comprobante subido correctamente", payload: updatedOrder });
   } catch (error) {
+    await removeUploadedFile(req.file);
     next(error);
   }
 }

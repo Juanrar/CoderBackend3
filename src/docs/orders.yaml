@@ -234,3 +234,58 @@ paths:
           $ref: "#/components/responses/OrderNotFound"
         "500":
           $ref: "#/components/responses/ServerError"
+
+  /api/orders/{oid}/proof:
+
+    post:
+      summary: Subir el comprobante de entrega de un pedido
+      description: >
+        Sube el comprobante de entrega y lo asocia al pedido. El binario se guarda en
+        uploads/proofs con un nombre UUID y en la base queda unicamente la metadata.
+        Formatos aceptados: PDF, JPEG, PNG y WEBP. Tamano maximo: 5MB.
+      tags:
+        - Orders
+      parameters:
+        - $ref: "#/components/parameters/oid"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [proof]
+              properties:
+                proof:
+                  type: string
+                  format: binary
+                  description: Comprobante de entrega (PDF, JPEG, PNG o WEBP, hasta 5MB)
+      responses:
+        "200":
+          description: Comprobante subido y asociado al pedido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      payload:
+                        $ref: "#/components/schemas/Order"
+              example:
+                status: success
+                message: Comprobante subido correctamente
+                payload:
+                  _id: "652f1c8e4b3a2d0012a4f9c7"
+                  status: delivered
+                  proof:
+                    originalName: entrega-firmada.jpg
+                    fileName: "2c6402b9-25a5-475a-ba61-3944c72f1261.jpg"
+                    path: uploads/proofs/2c6402b9-25a5-475a-ba61-3944c72f1261.jpg
+                    mimeType: image/jpeg
+                    size: 102400
+        "400":
+          $ref: "#/components/responses/InvalidFile"
+        "404":
+          $ref: "#/components/responses/OrderNotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"

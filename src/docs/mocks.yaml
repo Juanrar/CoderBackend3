@@ -87,10 +87,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MockError"
+                $ref: "#/components/schemas/ApiError"
               example:
                 status: error
-                message: "Invalid input. 'users' and 'orders' must be numbers."
+                error: INVALID_MOCK_QUANTITY
+                message: "'users' debe ser un numero entero"
 
   /api/mocks/generateMockOrders:
 
@@ -133,10 +134,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MockError"
+                $ref: "#/components/schemas/ApiError"
               example:
                 status: error
-                message: "Invalid input. 'users' and 'orders' must be numbers."
+                error: INVALID_MOCK_QUANTITY
+                message: "'users' debe ser un numero entero"
 
   /api/mocks/generateData:
 
@@ -184,21 +186,23 @@ paths:
                 type: object
                 properties:
                   status:  { type: string, example: success }
-                  message: { type: string, example: Data generated successfully }
+                  message: { type: string, example: Datos de prueba generados e insertados en la base }
                   payload:
                     type: object
                     description: Cantidad de documentos insertados de cada tipo
                     properties:
                       users:  { type: integer, example: 10 }
-                      orders: { type: integer, example: 20 }
+                      owners: { type: integer, description: Usuarios con rol store creados como duenos, example: 3 }
                       stores: { type: integer, example: 3 }
+                      orders: { type: integer, example: 20 }
               example:
                 status: success
-                message: Data generated successfully
+                message: Datos de prueba generados e insertados en la base
                 payload:
                   users: 10
-                  orders: 20
+                  owners: 3
                   stores: 3
+                  orders: 20
         "400":
           description: >
             Datos invalidos, se supero el maximo de 100, o faltan usuarios o
@@ -206,31 +210,35 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MockError"
+                $ref: "#/components/schemas/ApiError"
               examples:
                 invalidos:
-                  summary: Algun campo no es un numero
+                  summary: Algun campo no es un numero entero
                   value:
                     status: error
-                    message: Invalid data
+                    error: INVALID_MOCK_QUANTITY
+                    message: "'users' debe ser un numero entero"
                 maximo:
                   summary: Se supero el maximo permitido
                   value:
                     status: error
-                    message: Maximum amount of users, orders or stores is 100
+                    error: INVALID_MOCK_QUANTITY
+                    message: "'orders' no puede superar 100"
                 sinUsuarios:
                   summary: Se pidieron tiendas sin usuarios
                   value:
                     status: error
-                    message: Generating stores requires at least 1 user to act as owner
+                    error: INVALID_MOCK_QUANTITY
+                    message: Generar tiendas requiere al menos 1 usuario que actue como dueno
                 sinTiendas:
                   summary: Se pidieron pedidos sin usuarios o sin tiendas
                   value:
                     status: error
-                    message: Generating orders requires at least 1 user and 1 store
+                    error: INVALID_MOCK_QUANTITY
+                    message: Generar pedidos requiere al menos 1 usuario y 1 tienda
         "500":
           description: Error interno del servidor
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MockError"
+                $ref: "#/components/schemas/ApiError"

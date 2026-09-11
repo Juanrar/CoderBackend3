@@ -1,6 +1,6 @@
 import { usersService } from "../services/users.service.js";
 import { successResponse } from "../utils/apiResponse.js";
-import fs from 'fs';
+import { removeUploadedFile } from "../utils/fileCleanup.js";
 
 export const getUsers = async (req, res, next) => {
   try {
@@ -54,11 +54,8 @@ export const uploadUserDocument = async (req, res, next) => {
     const { type } = req.body
     const user = await usersService.addDocument(uid, file, type)
     successResponse(res, { message: "Documento subido correctamente", payload: user });
-  }catch (error) {
-    if (req.file && req.file.path) {
-      await fs.promises.unlink(req.file.path)
-    }
-    
+  } catch (error) {
+    await removeUploadedFile(req.file);
     next(error);
   }
 }

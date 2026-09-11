@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getOrders, getOrderById, createOrder, updateOrderStatus, deleteOrder, uploadUserDocument, uploadOrderProof } from "../controllers/orders.controller.js";
+import { getOrders, getOrderById, createOrder, updateOrderStatus, deleteOrder, uploadOrderProof } from "../controllers/orders.controller.js";
 import {uploadProof} from '../middlewares/upload.middleware.js';
 
 const router = Router();
