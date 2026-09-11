@@ -55,8 +55,9 @@ app.use("/api/orders", ordersRouter);
 
 if (!envConfig.isProd){
   app.use("/api/mocks", mocksRouter);
-  app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
 }
+  app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
+
 
 app.use(notFoundHandler);
 app.use(errorHandler);
