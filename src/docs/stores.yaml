@@ -4,9 +4,18 @@ paths:
 
     get:
       summary: Listar tiendas
-      description: Endpoint que devuelve el listado completo de tiendas
+      description: >
+        Devuelve el listado de tiendas de forma paginada. Nunca devuelve la coleccion
+        completa: si no se envian parametros se aplica un limite por defecto de 10
+        documentos, con un maximo de 100 por pagina.
       tags:
         - Stores
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort"
+        - $ref: "#/components/parameters/isActive"
+        - $ref: "#/components/parameters/owner"
       responses:
         "200":
           description: Tiendas obtenidas
@@ -17,6 +26,8 @@ paths:
                   - $ref: "#/components/schemas/ApiSuccess"
                   - type: object
                     properties:
+                      pagination:
+                        $ref: "#/components/schemas/Pagination"
                       payload:
                         type: array
                         items:

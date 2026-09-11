@@ -1,10 +1,27 @@
 import { usersRepository } from "../repositories/users.repository.js";
 import { createError } from "../utils/apiResponse.js";
 import { DOCUMENT_TYPES } from "../constants/documents.contants.js";
+import { buildPaginationOptions, formatPaginated } from "../utils/pagination.js";
 
 export const usersService = {
-  getUsers: async () => {
-    return usersRepository.findAll();
+  getUsers: async (query = {}) => {
+    const { role, email } = query;
+    const filter = {};
+
+    if (role) {
+      if (!["admin", "customer", "store"].includes(role)) {
+        throw createError("VALIDATION_ERROR", `El rol '${role}' no es valido`);
+      }
+      filter.role = role;
+    }
+
+    if (email) filter.email = email.toLowerCase();
+
+    const options = buildPaginationOptions(query, {
+      allowedSortFields: ["createdAt", "updatedAt", "firstName", "lastName", "email", "role"]
+    });
+
+    return formatPaginated(await usersRepository.findAll(filter, options));
   },
 
   getUserById: async (id) => {

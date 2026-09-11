@@ -1,9 +1,26 @@
 import { storesRepository } from "../repositories/stores.repository.js";
 import { createError } from "../utils/apiResponse.js";
+import { buildPaginationOptions, formatPaginated } from "../utils/pagination.js";
 
 export const storesService = {
-  getStores: async () => {
-    return storesRepository.findAll();
+  getStores: async (query = {}) => {
+    const { isActive, owner } = query;
+    const filter = {};
+
+    if (isActive !== undefined) {
+      if (!["true", "false"].includes(isActive)) {
+        throw createError("VALIDATION_ERROR", "El parámetro 'isActive' debe ser true o false");
+      }
+      filter.isActive = isActive === "true";
+    }
+
+    if (owner) filter.owner = owner;
+
+    const options = buildPaginationOptions(query, {
+      allowedSortFields: ["createdAt", "updatedAt", "name", "isActive"]
+    });
+
+    return formatPaginated(await storesRepository.findAll(filter, options));
   },
 
   getStoreById: async (id) => {

@@ -193,6 +193,19 @@ components:
 
     # Los endpoints de mocks NO pasan por errorHandler:
     # responden a mano y sin la clave "error"
+    # Metadata que acompania a todo listado paginado
+    Pagination:
+      type: object
+      properties:
+        totalDocs:   { type: integer, example: 42 }
+        limit:       { type: integer, example: 10 }
+        totalPages:  { type: integer, example: 5 }
+        page:        { type: integer, example: 1 }
+        hasPrevPage: { type: boolean, example: false }
+        hasNextPage: { type: boolean, example: true }
+        prevPage:    { type: integer, nullable: true, example: null }
+        nextPage:    { type: integer, nullable: true, example: 2 }
+
     MockError:
       type: object
       properties:
@@ -200,6 +213,98 @@ components:
         message: { type: string, example: Invalid data }
 
   parameters:
+
+    page:
+      name: page
+      in: query
+      required: false
+      description: Numero de pagina a solicitar (entero mayor a 0)
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      example: 1
+
+    limit:
+      name: limit
+      in: query
+      required: false
+      description: Cantidad de documentos por pagina. El maximo permitido es 100.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 10
+
+    sort:
+      name: sort
+      in: query
+      required: false
+      description: >
+        Orden del listado con formato campo:asc|desc.
+        Admite varios campos separados por coma. Por defecto createdAt:desc.
+      schema:
+        type: string
+      example: createdAt:desc
+
+    role:
+      name: role
+      in: query
+      required: false
+      description: Filtra los usuarios por rol
+      schema:
+        type: string
+        enum: [admin, customer, store]
+      example: customer
+
+    email:
+      name: email
+      in: query
+      required: false
+      description: Filtra por email exacto
+      schema:
+        type: string
+        format: email
+      example: juan@mail.com
+
+    isActive:
+      name: isActive
+      in: query
+      required: false
+      description: Filtra las tiendas por estado de actividad
+      schema:
+        type: boolean
+      example: true
+
+    owner:
+      name: owner
+      in: query
+      required: false
+      description: Filtra las tiendas por ID del usuario duenio
+      schema:
+        type: string
+      example: "652f1c8e4b3a2d0012a4f9b1"
+
+    status:
+      name: status
+      in: query
+      required: false
+      description: Filtra los pedidos por estado
+      schema:
+        type: string
+        enum: [created, assigned, picked_up, in_transit, delivered, cancelled]
+      example: delivered
+
+    priority:
+      name: priority
+      in: query
+      required: false
+      description: Filtra los pedidos por prioridad
+      schema:
+        type: string
+        enum: [low, normal, high]
+      example: high
 
     uid:
       name: uid

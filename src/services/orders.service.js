@@ -1,10 +1,35 @@
 import { ordersRepository } from "../repositories/orders.repository.js";
 import { createError } from "../utils/apiResponse.js";
 import { ORDER_STATUSES } from "../constants/order.constants.js";
+import { buildPaginationOptions, formatPaginated } from "../utils/pagination.js";
 
 export const ordersService = {
-  getOrders: async () => {
-    return ordersRepository.findAll();
+  getOrders: async (query = {}) => {
+    const { status, priority, customer, store } = query;
+    const filter = {};
+
+    if (status) {
+      if (!ORDER_STATUSES.includes(status)) {
+        throw createError("VALIDATION_ERROR", `El estado '${status}' no es valido`);
+      }
+      filter.status = status;
+    }
+
+    if (priority) {
+      if (!["low", "normal", "high"].includes(priority)) {
+        throw createError("VALIDATION_ERROR", `La prioridad '${priority}' no es valida`);
+      }
+      filter.priority = priority;
+    }
+
+    if (customer) filter.customer = customer;
+    if (store) filter.store = store;
+
+    const options = buildPaginationOptions(query, {
+      allowedSortFields: ["createdAt", "updatedAt", "total", "status", "priority"]
+    });
+
+    return formatPaginated(await ordersRepository.findAll(filter, options));
   },
 
   getOrderById: async (id) => {

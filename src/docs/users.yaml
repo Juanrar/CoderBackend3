@@ -4,9 +4,18 @@ paths:
 
     get:
       summary: Listar usuarios
-      description: Endpoint que devuelve el listado completo de usuarios
+      description: >
+        Devuelve el listado de usuarios de forma paginada. Nunca devuelve la coleccion
+        completa: si no se envian parametros se aplica un limite por defecto de 10
+        documentos, con un maximo de 100 por pagina.
       tags:
         - Users
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort"
+        - $ref: "#/components/parameters/role"
+        - $ref: "#/components/parameters/email"
       responses:
         "200":
           description: Usuarios obtenidos
@@ -17,6 +26,8 @@ paths:
                   - $ref: "#/components/schemas/ApiSuccess"
                   - type: object
                     properties:
+                      pagination:
+                        $ref: "#/components/schemas/Pagination"
                       payload:
                         type: array
                         items:

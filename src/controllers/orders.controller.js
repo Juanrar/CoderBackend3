@@ -4,8 +4,8 @@ import { successResponse } from "../utils/apiResponse.js";
 
 export const getOrders = async (req, res, next) => {
   try {
-    const orders = await ordersService.getOrders();
-    successResponse(res, { message: "Lista de pedidos obtenida", payload: orders });
+    const { payload, pagination } = await ordersService.getOrders(req.query);
+    successResponse(res, { message: "Lista de pedidos obtenida", payload, pagination });
   } catch (error) {
     next(error);
   }

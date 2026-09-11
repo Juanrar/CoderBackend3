@@ -4,9 +4,18 @@ paths:
 
     get:
       summary: Listar pedidos
-      description: Endpoint que devuelve el listado completo de pedidos
+      description: >
+        Devuelve el listado de pedidos de forma paginada. Nunca devuelve la coleccion
+        completa: si no se envian parametros se aplica un limite por defecto de 10
+        documentos, con un maximo de 100 por pagina.
       tags:
         - Orders
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort"
+        - $ref: "#/components/parameters/status"
+        - $ref: "#/components/parameters/priority"
       responses:
         "200":
           description: Pedidos obtenidos
@@ -17,6 +26,8 @@ paths:
                   - $ref: "#/components/schemas/ApiSuccess"
                   - type: object
                     properties:
+                      pagination:
+                        $ref: "#/components/schemas/Pagination"
                       payload:
                         type: array
                         items:

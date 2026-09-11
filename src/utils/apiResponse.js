@@ -1,10 +1,12 @@
 import { ERROR_DICTIONARY } from "./errorDictionary.js";
 
-export function successResponse(res, { statusCode = 200, message, payload }) {
+export function successResponse(res, { statusCode = 200, message, payload, pagination }) {
     return res.status(statusCode).json({
         status: "success",
         message,
-        payload
+        payload,
+        // Solo presente en endpoints de listado paginado.
+        ...(pagination && { pagination })
     });
 }
 

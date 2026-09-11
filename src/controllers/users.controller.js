@@ -4,8 +4,8 @@ import fs from 'fs';
 
 export const getUsers = async (req, res, next) => {
   try {
-    const users = await usersService.getUsers();
-    successResponse(res, { message: "Lista de usuarios obtenido", payload: users });
+    const { payload, pagination } = await usersService.getUsers(req.query);
+    successResponse(res, { message: "Lista de usuarios obtenido", payload, pagination });
   } catch (error) {
     next(error);
   }
