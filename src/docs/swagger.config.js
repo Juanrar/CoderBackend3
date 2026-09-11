@@ -1,4 +1,10 @@
 import swaggerJSDoc from "swagger-jsdoc";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const docsDir = path.dirname(fileURLToPath(import.meta.url));
+
+const yamlGlob = path.join(docsDir, "**", "*.yaml").replace(/\\/g, "/");
 
 const swaggerOptions = {
     definition: {
@@ -15,7 +21,7 @@ const swaggerOptions = {
             }
         ]
     },
-    apis: ["./src/docs/**/*.yaml"]
+    apis: [yamlGlob]
 };
 
 export const swaggerSpec = swaggerJSDoc(swaggerOptions);

@@ -39,6 +39,17 @@ if (!VALID_LOG_LEVELS.includes(logLevel)) {
   );
 }
 
+const parseBoolean = (rawValue, fallback) => {
+  if (rawValue === undefined || rawValue === "") return fallback;
+  if (rawValue === "true") return true;
+  if (rawValue === "false") return false;
+
+  errors.push(`ENABLE_MOCKS='${rawValue}' no es valido. Valores permitidos: true, false`);
+  return fallback;
+};
+
+const enableMocks = parseBoolean(process.env.ENABLE_MOCKS, nodeEnv !== "production");
+
 if (errors.length) {
   console.error("\n[CONFIG] La aplicacion no puede iniciar por errores de configuracion:");
   errors.forEach((error) => console.error(`  - ${error}`));
@@ -53,6 +64,7 @@ export const envConfig = {
   logLevel,
   isProd: nodeEnv === "production",
   isTest: nodeEnv === "test",
+  enableMocks,
   
   corsOrigins: (process.env.CORS_ORIGINS || "")
     .split(",")

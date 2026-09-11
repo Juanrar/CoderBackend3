@@ -53,10 +53,11 @@ app.use("/api/users", usersRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/orders", ordersRouter);
 
-if (!envConfig.isProd){
+if (envConfig.enableMocks) {
   app.use("/api/mocks", mocksRouter);
 }
-  app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
+
+app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
 
 
 app.use(notFoundHandler);
