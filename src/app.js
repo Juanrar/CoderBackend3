@@ -8,6 +8,9 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { addLogger } from "./middlewares/logger.middleware.js";
 import { envConfig } from "./config/env.js";
+import mongoose from "mongoose";
+import { successResponse } from "./utils/apiResponse.js";
+
 
 import { swaggerSpec } from "./docs/swagger.config.js";
 import swaggerUiExpress from "swagger-ui-express";
@@ -27,9 +30,22 @@ app.get("/", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({
-    status: "success",
-    message: "API funcionando"
+  const dbStates = {
+    0: "disconnected",
+    1: "connected",
+    2: "connecting",
+    3: "disconnecting"
+  };
+
+  successResponse(res, {
+    message: "API funcionando",
+    payload: {
+      status: "ok",
+      environment: envConfig.nodeEnv,
+      uptime: Math.floor(process.uptime()),
+      timestamp: new Date().toISOString(),
+      database: dbStates[mongoose.connection.readyState] ?? "unknown"
+    }
   });
 });
 

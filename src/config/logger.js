@@ -1,4 +1,5 @@
 import winston from 'winston';
+import { envConfig } from "./env.js";
 
 const customLevels = {
     levels:{
@@ -24,11 +25,7 @@ winston.addColors(customLevels.colors);
 const logger = winston.createLogger({
     levels: customLevels.levels,
 
-    level:
-        process.env.NODE_ENV === "test" ? "error" 
-                                : process.env.NODE_ENV === "production" 
-                                ? "info": "debug",
-
+    level: envConfig.logLevel,
 
     format: winston.format.combine(
         winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),

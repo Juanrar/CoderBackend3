@@ -2,16 +2,36 @@ paths:
  /health:
   get:
    summary: Verificar estado de la API
-   description: Endpoint simple para verificar que ShipNow esta funcionando.
-   tags: 
+   description: >
+    Endpoint de health check. Devuelve estado, entorno, uptime en segundos,
+    timestamp y estado de la conexion a la base de datos.
+    No expone informacion sensible (ni URIs, ni credenciales, ni secretos).
+   tags:
     - Health
    responses:
     "200":
      description: API funcionando correctamente
-     content: 
-      application/json: 
+     content:
+      application/json:
        schema:
-        $ref: "#/components/schemas/ApiSuccess"
+        allOf:
+         - $ref: "#/components/schemas/ApiSuccess"
+         - type: object
+           properties:
+            payload:
+             type: object
+             properties:
+              status:      { type: string, example: ok }
+              environment: { type: string, example: development }
+              uptime:      { type: integer, description: Segundos desde el arranque, example: 128 }
+              timestamp:   { type: string, format: date-time }
+              database:    { type: string, enum: [connected, connecting, disconnecting, disconnected, unknown], example: connected }
        example:
         status: success
         message: API funcionando
+        payload:
+         status: ok
+         environment: development
+         uptime: 128
+         timestamp: "2026-09-11T14:32:10.512Z"
+         database: connected
