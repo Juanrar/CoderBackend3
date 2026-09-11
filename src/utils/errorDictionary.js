@@ -34,5 +34,33 @@ export const ERROR_DICTIONARY = {
     FILE_REQUIRED:{
         statusCode: 400,
         message: "Se requiere un archivo para subir"
+    },
+    INVALID_FILE_TYPE: {
+        statusCode: 400,
+        message: "Tipo de archivo no permitido. Formatos aceptados: PDF, JPEG, PNG, WEBP"
+    },
+    INVALID_DOCUMENT_TYPE: {
+        statusCode: 400,
+        message: "Tipo de documento invalido"
+    },
+    FILE_TOO_LARGE: {
+        statusCode: 400,
+        message: "El archivo supera el tamano maximo permitido (5MB)"
+    },
+    INVALID_FILE_FIELD: {
+        statusCode: 400,
+        message: "Campo de archivo inesperado"
+    },
+    TOO_MANY_FILES: {
+        statusCode: 400,
+        message: "Se enviaron mas archivos de los permitidos"
+    },
+    INVALID_STATUS: {
+        statusCode: 400,
+        message: "Estado de pedido invalido"
+    },
+    INVALID_MOCK_QUANTITY: {
+        statusCode: 400,
+        message: "Cantidad de mocks invalida"
     }
 }
