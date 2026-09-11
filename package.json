@@ -10,6 +10,7 @@
     "test": "mocha --require ./test/setup.js --timeout 10000 --exit ./test/**/*.test.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.9.0",
     "chai": "^6.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -24,7 +25,6 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.9.0",
     "nodemon": "^3.1.9"
   }
 }
