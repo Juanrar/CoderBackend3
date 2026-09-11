@@ -122,6 +122,61 @@ cancelled
 
 ### Endpoints disponibles
 
+## Paginación, filtros y orden
+
+Los tres listados principales (`GET /api/users`, `GET /api/stores`, `GET /api/orders`)
+están paginados con `mongoose-paginate-v2`. **Nunca devuelven la colección completa.**
+
+Parámetros comunes de query string:
+
+| Parámetro | Default | Descripción |
+| --- | --- | --- |
+| `page` | `1` | Número de página (entero mayor a 0) |
+| `limit` | `10` | Documentos por página. **Máximo 100**, aunque se pida más |
+| `sort` | `createdAt:desc` | Orden con formato `campo:asc\|desc`, admite varios separados por coma |
+
+Filtros propios de cada recurso:
+
+| Endpoint | Filtros |
+| --- | --- |
+| `GET /api/users` | `role` (admin, customer, store), `email` |
+| `GET /api/stores` | `isActive` (true/false), `owner` |
+| `GET /api/orders` | `status`, `priority`, `customer`, `store` |
+
+Un `page`, `limit`, `sort` o filtro inválido responde `400` con el formato de error
+centralizado de la API.
+
+Ejemplo:
+
+```http
+GET /api/orders?page=2&limit=20&status=delivered&sort=total:desc
+```
+
+Respuesta:
+
+```json
+{
+  "status": "success",
+  "message": "Lista de pedidos obtenida",
+  "payload": [],
+  "pagination": {
+    "totalDocs": 42,
+    "limit": 20,
+    "totalPages": 3,
+    "page": 2,
+    "hasPrevPage": true,
+    "hasNextPage": true,
+    "prevPage": 1,
+    "nextPage": 3
+  }
+}
+```
+
+El listado de pedidos además proyecta solo los campos necesarios de `customer` y
+`store` en el populate, para no arrastrar documentos completos en cada item.
+
+
+
 ### Health check
 
 Permite verificar que la API está funcionando.
@@ -148,6 +203,8 @@ Respuesta esperada:
 ```http
 GET /api/users
 ```
+
+Paginado. Ver [Paginación, filtros y orden](#paginación-filtros-y-orden).
 
 ### Obtener usuario por ID
 
@@ -195,6 +252,8 @@ DELETE /api/users/:uid
 GET /api/stores
 ```
 
+Paginado. Ver [Paginación, filtros y orden](#paginación-filtros-y-orden).
+
 ### Obtener comercio por ID
 
 ```http
@@ -238,6 +297,8 @@ DELETE /api/stores/:sid
 ```http
 GET /api/orders
 ```
+
+Paginado. Ver [Paginación, filtros y orden](#paginación-filtros-y-orden).
 
 ### Obtener pedido por ID
 
