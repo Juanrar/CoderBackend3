@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors";
+import { corsMiddleware } from "./config/cors.js";
 import usersRouter from "./routes/users.router.js";
 import storesRouter from "./routes/stores.router.js";
 import ordersRouter from "./routes/orders.router.js";
@@ -18,7 +18,7 @@ import swaggerUiExpress from "swagger-ui-express";
 
 const app = express();
 
-app.use(cors());
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(addLogger);
 
