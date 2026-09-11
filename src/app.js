@@ -7,6 +7,7 @@ import mocksRouter from "./routes/mocks.router.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { addLogger } from "./middlewares/logger.middleware.js";
+import { envConfig } from "./config/env.js";
 
 import { swaggerSpec } from "./docs/swagger.config.js";
 import swaggerUiExpress from "swagger-ui-express";
@@ -35,9 +36,12 @@ app.get("/health", (req, res) => {
 app.use("/api/users", usersRouter);
 app.use("/api/stores", storesRouter);
 app.use("/api/orders", ordersRouter);
-app.use("/api/mocks", mocksRouter);
 
-app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
+
+if (!envConfig.isProd){
+  app.use("/api/mocks", mocksRouter);
+  app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
+}
 
 app.use(notFoundHandler);
 app.use(errorHandler);
