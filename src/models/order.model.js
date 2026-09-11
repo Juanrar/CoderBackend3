@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 import { ORDER_STATUSES } from "../constants/order.constants.js";
 
 const orderItemSchema = new mongoose.Schema(
@@ -65,6 +66,8 @@ const orderSchema = new mongoose.Schema(
     versionKey: false
   }
 );
+
+orderSchema.plugin(mongoosePaginate);
 
 const OrderModel = mongoose.model("Order", orderSchema);
 

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 
 const documentSchema = new mongoose.Schema(
@@ -76,6 +77,8 @@ userSchema.set("toJSON", {
     return objeto;
   }
 });
+
+userSchema.plugin(mongoosePaginate);
 
 const UserModel = mongoose.model("User", userSchema);
 

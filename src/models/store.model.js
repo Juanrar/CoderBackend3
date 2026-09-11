@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const storeSchema = new mongoose.Schema(
   {
@@ -25,6 +26,8 @@ const storeSchema = new mongoose.Schema(
     versionKey: false
   }
 );
+
+storeSchema.plugin(mongoosePaginate);
 
 const StoreModel = mongoose.model("Store", storeSchema);
 

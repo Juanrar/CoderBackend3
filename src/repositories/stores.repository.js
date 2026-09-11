@@ -3,8 +3,8 @@ import UserModel from "../models/user.model.js";
 
 
 export const storesRepository = {
-  findAll: async () => {
-    return StoreModel.find();
+  findAll: async (filter = {}, options = {}) => {
+    return StoreModel.paginate(filter, options);
   },
 
   findById: async (id) => {

@@ -3,8 +3,14 @@ import UserModel from "../models/user.model.js";
 import StoreModel from "../models/store.model.js";
 
 export const ordersRepository = {
-  findAll: async () => {
-    return OrderModel.find().populate("customer").populate("store");
+  findAll: async (filter = {}, options = {}) => {
+    return OrderModel.paginate(filter, {
+      ...options,
+      populate: [
+        { path: "customer", select: "firstName lastName email role" },
+        { path: "store", select: "name address isActive" }
+      ]
+    });
   },
 
   findById: async (id) => {

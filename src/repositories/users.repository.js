@@ -1,8 +1,8 @@
 import UserModel from "../models/user.model.js";
 
 export const usersRepository = {
-  findAll: async () => {
-    return UserModel.find();
+  findAll: async (filter = {}, options = {}) => {
+    return UserModel.paginate(filter, { ...options, select: "-password" });
   },
 
   findById: async (id) => {
