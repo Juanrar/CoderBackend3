@@ -3,7 +3,13 @@ node_modules
 !.env.example
 !.env.test.example
 logs
-uploads
 coverage
 npm-debug.log
-uploads/
+
+# Los binarios subidos no se versionan, pero si la estructura de carpetas.
+uploads/*
+!uploads/documents
+!uploads/proofs
+!uploads/licenses
+uploads/*/*
+!uploads/*/.gitkeep
